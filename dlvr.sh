@@ -25,7 +25,7 @@ get_video() {
 }
 
 convert_video() {
-    ffmpeg -i ${outfile}.mjpeg -c:v libx264 -preset veryslow -crf 23 ${outfile}.mp4
+    ffmpeg -framerate 15 -i ${outfile}.mjpeg -c:v libx264 -preset veryslow -crf 23 ${outfile}.mp4
     rm ${outfile}.mjpeg
 }
 
@@ -35,3 +35,4 @@ main() {
 }
 
 main
+
