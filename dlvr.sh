@@ -3,11 +3,11 @@
 set -e
 
 USAGE=$(cat <<- EOF
-    Usage: $0 <username:password> <url> <seconds> <outfile base>
+    Usage: $0 <username:password> <url> <seconds> <count> <outfile base>
 EOF
 )
 
-if [ $# -ne 4 ]; then
+if [ $# -ne 5 ]; then
     echo ${USAGE}
     exit 1
 fi
@@ -15,23 +15,26 @@ fi
 auth=$1
 url=$2
 seconds=$3
-outfile="${4:-output}-$(date +%Y%m%d-%H%M%S)"
+count=$4
 
 get_video() {
-    curl -u ${auth} ${url} -o ${outfile}.mjpeg &
+    curl -su ${auth} ${url} -o "${1}.mjpeg" &
     PID=$!
     sleep ${seconds}
     kill ${PID}
 }
 
 convert_video() {
-    ffmpeg -framerate 15 -i ${outfile}.mjpeg -c:v libx264 -preset veryslow -crf 23 ${outfile}.mp4
-    rm ${outfile}.mjpeg
+    ffmpeg -loglevel quiet -framerate 15 -i "${1}.mjpeg" -c:v libx264 -preset veryslow -crf 23 "${1}.mp4"
+    rm "${1}.mjpeg"
 }
 
 main() {
-    get_video
-    convert_video
+    for x in $(seq 1 $count); do
+        outfile="$x-$(date +%Y%m%d-%H%M%S)"
+        get_video $outfile
+        convert_video $outfile &
+    done
 }
 
 main
