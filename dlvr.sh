@@ -12,10 +12,11 @@ if [ $# -ne 5 ]; then
     exit 1
 fi
 
-auth=$1
-url=$2
-seconds=$3
-count=$4
+auth="${1}"
+url="${2}"
+seconds="${3}"
+count="${4}"
+outfile="${5}"
 
 get_video() {
     curl -su ${auth} ${url} -o "${1}.mjpeg" &
@@ -31,9 +32,9 @@ convert_video() {
 
 main() {
     for x in $(seq 1 $count); do
-        outfile="$x-$(date +%Y%m%d-%H%M%S)"
-        get_video $outfile
-        convert_video $outfile &
+        outfile_="${outfile}-$(date +%Y%m%d-%H%M%S)"
+        get_video $outfile_
+        convert_video $outfile_ &
     done
 }
 
