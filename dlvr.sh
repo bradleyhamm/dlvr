@@ -26,7 +26,7 @@ get_video() {
 }
 
 convert_video() {
-    ffmpeg -loglevel quiet -framerate 15 -i "${1}.mjpeg" -c:v libx264 -preset veryslow -crf 23 "${1}.mp4"
+    ffmpeg -loglevel quiet -framerate 15 -i "${1}.mjpeg" -c:v libx264 -crf 23 "${1}.mp4"
     rm "${1}.mjpeg"
 }
 
